@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DONS Online Examination Portal</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172554;
+    }
+    header {
+      background: #102b55;
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 8px; }
+    header p { margin: 0; color: #dbeafe; }
+    main {
+      max-width: 850px;
+      margin: 35px auto;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px #00000012;
+      margin-bottom: 22px;
+    }
+    h2 { margin-top: 0; }
+    input {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      margin: 12px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    button {
+      background: #155eaa;
+      color: white;
+      border: 0;
+      border-radius: 7px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #0c3e78; }
+    .classes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    .class-card {
+      background: #eaf2ff;
+      border: 1px solid #c7dcff;
+      border-radius: 8px;
+      text-align: center;
+      padding: 20px 8px;
+      font-weight: bold;
+    }
+    #message { margin-top: 15px; color: #9f1239; }
+    #dashboard { display: none; }
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>DONS SCHOOL OF SCIENCE & TECHNOLOGY</h1>
+  <p>Online Examination Portal (DONS-OEP)</p>
+</header>
+
+<main>
+  <section class="card" id="login">
+    <h2>Portal Login</h2>
+    <p>Enter your registered email address and password.</p>
+
+    <input type="email" id="email" placeholder="Email address">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="loginUser()">Sign In</button>
+    <p id="message"></p>
+  </section>
+
+  <section class="card" id="dashboard">
+    <h2>Welcome to DONS-OEP</h2>
+    <p id="user"></p>
+    <p>You are signed in. Your examination dashboard will be available here.</p>
+    <button onclick="logoutUser()">Sign Out</button>
+  </section>
+
+  <section class="card">
+    <h2>Our Classes</h2>
+    <div class="classes">
+      <div class="class-card">JSS1</div>
+      <div class="class-card">JSS2</div>
+      <div class="class-card">JSS3</div>
+      <div class="class-card">SS1</div>
+      <div class="class-card">SS2</div>
+      <div class="class-card">SS3</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  &copy; 2026 DONS School of Science & Technology
+</footer>
+
+<script>
+  const SUPABASE_URL = "https://dxzdkazjlbmegeiwrbic.supabase.co";
+  const SUPABASE_KEY = sb_publishable_Tpw1eE711ktoUlQjSYyYHg_RrtrWRjN
+
+  const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  async function loginUser() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
+
+    message.textContent = "Signing in...";
+
+    const { data, error } = await client.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    showDashboard(data.user);
+  }
+
+  function showDashboard(user) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("user").textContent =
+      "Signed in as: " + user.email;
+  }
+
+  async function logoutUser() {
+    await client.auth.signOut();
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("login").style.display = "block";
+    document.getElementById("message").textContent = "";
+  }
+
+  async function checkSession() {
+    const { data } = await client.auth.getSession();
+    if (data.session) showDashboard(data.session.user);
+  }
+
+  checkSession();
+</script>
+
+</body>
+</html>
