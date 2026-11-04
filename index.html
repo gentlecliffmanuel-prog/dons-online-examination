@@ -108,7 +108,7 @@
     <div class="class-card">
       <h3>Student Management</h3>
       <p>Manage student records and classes.</p>
-      <button onclick="alert('Student management is coming next.')">Manage Students</button>
+     <button onclick="openStudentManagement()">Manage Students</button>
     </div>
 
     <div class="class-card">
@@ -209,6 +209,34 @@
   }
 
   checkSession();
+ function openStudentManagement() {
+  document.getElementById("dashboard").style.display = "none";
+
+  let page = document.getElementById("studentManagementPage");
+
+  if (!page) {
+    page = document.createElement("section");
+    page.id = "studentManagementPage";
+    page.className = "card";
+
+    page.innerHTML = `
+      <h2>Student Management</h2>
+      <p>Manage DONS School student records.</p>
+      <button onclick="backToDashboard()">Back to Dashboard</button>
+      <hr>
+      <p>Student registration and records will be connected here next.</p>
+    `;
+
+    document.body.appendChild(page);
+  }
+
+  page.style.display = "block";
+}
+
+function backToDashboard() {
+  document.getElementById("studentManagementPage").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+}
 </script>
 
 </body>
